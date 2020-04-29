@@ -1,3 +1,5 @@
+/* Mapbox */
+
 .mapContainer {
   position: absolute;
   top: 0;
@@ -66,3 +68,369 @@
   padding: 6px;
   font-weight: bold;
 }
+
+/* React-Leaflet */
+.tooltip {
+  margin: 0;
+  padding: 0;
+}
+
+/* @charset "utf-8"; */
+/* CSS Document */
+
+/* Float Elements 
+---------------------------------*/
+.fl-lt {
+  float: left;
+}
+.fl-rt {
+  float: right;
+}
+
+/* Clear Floated Elements
+---------------------------------*/
+.clear {
+  clear: both;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+.clearfix:before,
+.clearfix:after {
+  content: '\0020';
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+/* Primary Styles
+---------------------------------*/
+body {
+  background: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  color: #000;
+  margin: 0;
+}
+
+/* Wrapper
+---------------------------------*/
+
+.dashboard {
+  background-color: #000;
+  display: flex;
+  flex-wrap: wrap;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.left-pannel {
+  width: 20%;
+}
+.right-pannel {
+  width: 20%;
+}
+
+.dashboard-viewport {
+  width: 60%;
+  padding: 10px 0;
+}
+.dashboard-viewport img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.panel-box {
+  border: 1px solid #363636;
+  margin: 10px;
+  padding: 10px 0;
+  background-color: #222;
+  color: #bdbdbd;
+  font-size: 14px;
+}
+.total-confirmed {
+  text-align: center;
+}
+.total-confirmed .total-numbers {
+  color: #e60000;
+  font-size: 46px;
+  line-height: normal;
+  margin: 0;
+  font-weight: 700;
+}
+.total-confirmed span {
+  color: #fff;
+}
+
+.pannel-header {
+  text-align: center;
+  padding: 0 20px;
+  line-height: 22px;
+  margin-bottom: 10px;
+}
+.list-item-content {
+  overflow-y: scroll;
+  position: relative;
+  height: calc(100vh - 100px);
+}
+.list-item-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.list-item-content ul li {
+  display: block;
+  font-size: 17px;
+  border-bottom: 1px solid #5c5c5c;
+}
+.list-item-content ul li a {
+  display: block;
+  color: #bdbdbd;
+  display: block;
+  text-decoration: none;
+  padding: 5px 10px;
+  transition: ease-in-out all 0.3s;
+  -webkit-transition: ease-in-out all 0.3s;
+}
+.list-item-content ul li.active a {
+  background-color: #1061a6;
+}
+.list-item-content ul li a strong {
+  font-weight: 700;
+  color: #e60000;
+}
+
+.right-pannel-top {
+  display: block;
+  flex-wrap: wrap;
+}
+.total-deaths {
+  width: 100%;
+}
+.total-test {
+  width: 100%;
+}
+.right-pannel-top .pannel-header {
+  font-size: 10px;
+  color: #fff;
+  margin-bottom: 20px;
+}
+.right-pannel-top .pannel-header span {
+  display: block;
+  margin-bottom: 8px;
+}
+.total-deaths .total-numbers {
+  color: #fff;
+  font-size: 40px;
+}
+.total-test .total-numbers {
+  color: rgb(115, 178, 255);
+  font-size: 30px;
+}
+
+.total-deaths-list {
+  border-top: 1px solid #5c5c5c;
+  overflow-y: scroll;
+  position: relative;
+  height: calc(50vh - 100px);
+}
+.total-deaths-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.total-deaths-list ul li {
+  display: block;
+  font-size: 14px;
+  border-bottom: 1px solid #5c5c5c;
+
+  color: #bdbdbd;
+  padding: 5px 10px;
+  transition: ease-in-out all 0.3s;
+  -webkit-transition: ease-in-out all 0.3s;
+}
+.total-deaths-list ul li.active {
+  background-color: #1061a6;
+}
+
+.total-deaths-list ul li p {
+  margin: 3px 0;
+}
+.total-deaths-list ul li span {
+  color: #fff;
+}
+.total-deaths-list ul li strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.total-test-list {
+  border-top: 1px solid #5c5c5c;
+  overflow-y: scroll;
+  position: relative;
+  height: calc(50vh - 110px);
+}
+.total-test-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.total-test-list ul li {
+  display: block;
+  font-size: 14px;
+  border-bottom: 1px solid #5c5c5c;
+
+  color: #bdbdbd;
+  padding: 5px 10px;
+  transition: ease-in-out all 0.3s;
+  -webkit-transition: ease-in-out all 0.3s;
+}
+.total-test-list ul li.active {
+  background-color: #1061a6;
+}
+
+.total-test-list ul li p {
+  margin: 3px 0;
+}
+.total-test-list ul li span {
+  color: #73b2ff;
+}
+.total-test-list ul li strong {
+  color: #fff;
+  font-weight: 400;
+}
+
+.right-pannel-bottom img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  -webkit-object-fit: cover;
+}
+
+/* Piehart */
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* @import "compass/css3";
+
+$colors: #2172b8
+         #18a39b
+         #82c545
+         #f8b739
+         #f06045
+         #ed2861
+         #c12680
+         #5d3191;
+
+$inner: 30px;
+$border: 6px;
+$spacing: 1px;
+
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+section.wrapper {
+  padding: 40px 0;
+  
+  &.dark {
+    background: #313134;
+  }
+}
+
+div.spinner {
+  @include animation(rotate 10s infinite linear);
+  position: relative;
+  display: block;
+  
+  margin: auto;
+  
+  $size: $inner + length($colors) * ($border + $spacing) * 2;
+  
+  width: $size;
+  height: $size;
+
+  i {
+    @include animation(
+      rotate 3s infinite cubic-bezier(.09, .6, .8, .03)
+    );
+    @include transform-origin(50%, 100%, 0);
+
+    position: absolute;
+    display: inline-block;
+
+    top: 50%;
+    left: 50%;
+
+    border: solid $border transparent;
+    border-bottom: none;
+
+    @each $current in $colors {
+      $i: index($colors, $current);
+
+      &:nth-child(#{$i}) {
+        $size: $inner + $i * ($border + $spacing) * 2;
+
+        @include animation-timing-function(
+          cubic-bezier(.09, .3 * $i, .12 * $i, .03)  
+        );
+
+        width: $size;
+        height: $size / 2;
+
+        margin-top: -$size / 2;
+        margin-left: -$size / 2;
+
+        border-color: $current;
+
+        border-top-left-radius: $inner + $i * $border;
+        border-top-right-radius: $inner + $i * $border;
+      }
+    }
+  }
+}
+
+@include keyframes(rotate) {
+  to {
+    @include rotateZ(360deg);
+  }
+} */
