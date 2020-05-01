@@ -1,6 +1,7 @@
 {
   "name": "template",
-  "homepage": "http://stagingwebsite.link/ivisa/coronavirus",
+  "homepage": "/",
+  "_comment": "homepage: http://stagingwebsite.link/ivisa/coronavirus",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
