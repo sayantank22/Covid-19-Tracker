@@ -6,7 +6,8 @@ import React, { Fragment } from 'react';
 // import { BrowserRouter as Router, Route } from 'react-router-dom';
 // import Leaflet from './components/leaflet';
 // import Template from './template';
-import CoronaApp from './components/covid-19-leafllet';
+// import CoronaApp from './components/covid-19-leafllet';
+import CoronaRapid from './components/corona';
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
     //     <Route exact path='/cleat/:id' component={CleatPage} />
     //   </Fragment>
     // </Router>
-    <CoronaApp />
+    <CoronaRapid />
   );
 }
 

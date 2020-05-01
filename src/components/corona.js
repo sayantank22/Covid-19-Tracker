@@ -4,6 +4,7 @@ import '../../node_modules/leaflet/dist/leaflet.css';
 import axios from 'axios';
 import cors from 'cors';
 import '../App.css';
+import unirest from 'unirest';
 // import Piechart from './Piechart';
 
 class App extends Component {
@@ -15,11 +16,13 @@ class App extends Component {
       place: '',
       Global: {},
       features: [],
-      Geolocation: [],
+      latlong: [],
+      rapidInfo: [],
       CountryInfo: [],
       TotalInfo: [],
       index: [],
       chartData: [],
+      coordinates: [],
       color: 'blue',
       isLoaded: false,
       center_lat: '5',
@@ -29,45 +32,140 @@ class App extends Component {
     };
   }
   componentDidMount() {
-    this.setState({
-      chartData: {
-        labels: [
-          'Boston',
-          'Worcester',
-          'Springfield',
-          'Lowell',
-          'Cambridge',
-          'New Bedford',
-        ],
-        datasets: [
-          {
-            label: 'Population',
-            data: [617594, 181045, 153060, 106519, 105162, 95072],
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.6)',
-              'rgba(54, 162, 235, 0.6)',
-              'rgba(255, 206, 86, 0.6)',
-              'rgba(75, 192, 192, 0.6)',
-              'rgba(153, 102, 255, 0.6)',
-              'rgba(255, 159, 64, 0.6)',
-              'rgba(255, 99, 132, 0.6)',
-            ],
-          },
-        ],
-      },
+    var req1 = unirest('GET', 'https://covid-193.p.rapidapi.com/statistics');
+
+    req1.headers({
+      'x-rapidapi-host': 'covid-193.p.rapidapi.com',
+      'x-rapidapi-key': '4c03320f02msh1b8f889e4c533d3p1ace7ajsnd5485bc0a069',
     });
 
-    axios.get('https://api.covid19api.com/summary', cors()).then((res) => {
+    req1.end((res) => {
+      if (res.error) throw new Error(res.error);
+      //   this.setState({
+      //     features: [...this.state.features, res.body.response],
+      //   });
+
+      // console.log(res.body.response);
+      res.body.response.map((result, index) => {
+        // console.log(result);
+        axios
+          .get(
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${result.country}.json?access_token=pk.eyJ1Ijoic2F5YW50YW5rMjIiLCJhIjoiY2s5ZWoxc2F0MDJhNDNtdGJqdmdzYmN4cSJ9.xICKivbxTOfggB9Q1nPkHA&limit=1`,
+            cors()
+          )
+          .then((res) => {
+            if (index === 3) {
+              this.setState({
+                rapidInfo: [
+                  ...this.state.rapidInfo,
+                  {
+                    confirmed: result.cases.total,
+                    country: result.country,
+                    deaths: result.deaths.total,
+                    recovered: result.cases.recovered,
+                    long: res.data.features[0].center[0],
+                    lat: res.data.features[0].center[1],
+                  },
+                ],
+              });
+            }
+            this.setState({
+              features: [
+                ...this.state.features,
+                {
+                  ...result,
+                  long: res.data.features[0].center[0],
+                  lat: res.data.features[0].center[1],
+                },
+              ],
+              latlong: [
+                ...this.state.latlong,
+                [
+                  res.data.features[0].center[0],
+                  res.data.features[0].center[1],
+                ],
+              ],
+            });
+          });
+      });
+    });
+
+    var req = unirest(
+      'GET',
+      'https://covid-19-coronavirus-statistics.p.rapidapi.com/v1/stats'
+    );
+
+    // req.query({
+    //   country: 'Canada',
+    // });
+
+    req.headers({
+      'x-rapidapi-host': 'covid-19-coronavirus-statistics.p.rapidapi.com',
+      'x-rapidapi-key': '4c03320f02msh1b8f889e4c533d3p1ace7ajsnd5485bc0a069',
+    });
+
+    req.end((res) => {
+      if (res.error) throw new Error(res.error);
+
+      // console.log(res.body);
+
+      res.body.data.covid19Stats.map((result, index) => {
+        // console.log(result.keyId);
+        if (result.country !== 'US') {
+          //   this.setState({
+          //     features: this.state.features.concat(result),
+          //   });
+          axios
+            .get(
+              `https://api.mapbox.com/geocoding/v5/mapbox.places/${
+                result.province !== null ? result.province : result.country
+              }.json?access_token=pk.eyJ1Ijoic2F5YW50YW5rMjIiLCJhIjoiY2s5ZWoxc2F0MDJhNDNtdGJqdmdzYmN4cSJ9.xICKivbxTOfggB9Q1nPkHA&limit=1`,
+              cors()
+            )
+            .then((res) => {
+              this.setState({
+                rapidInfo: [
+                  ...this.state.rapidInfo,
+                  {
+                    confirmed: result.confirmed === null ? 0 : result.confirmed,
+                    country: result.country,
+                    deaths: result.deaths === null ? 0 : result.deaths,
+                    keyId: result.keyId,
+                    lastUpdate: result.lastUpdate,
+                    province: result.lastUpdate,
+                    recovered: result.recovered === null ? 0 : result.recovered,
+                    long: res.data.features[0].center[0],
+                    lat: res.data.features[0].center[1],
+                  },
+                ],
+              });
+            });
+        }
+      });
+    });
+
+    var req2 = unirest(
+      'GET',
+      'https://covid-19-coronavirus-statistics.p.rapidapi.com/v1/total'
+    );
+
+    req2.headers({
+      'x-rapidapi-host': 'covid-19-coronavirus-statistics.p.rapidapi.com',
+      'x-rapidapi-key': '4c03320f02msh1b8f889e4c533d3p1ace7ajsnd5485bc0a069',
+    });
+
+    req2.end((res) => {
+      if (res.error) throw new Error(res.error);
+
       this.setState({
-        Global: res.data.Global,
-        CountryInfo: this.state.CountryInfo.concat(res.data.Countries),
+        Global: res.body.data,
       });
     });
 
     const today = new Date();
     const yesterday = new Date(today);
 
-    yesterday.setDate(yesterday.getDate() - 3);
+    yesterday.setDate(yesterday.getDate() - 2);
 
     let date = yesterday.toISOString();
 
@@ -114,22 +212,23 @@ class App extends Component {
   };
   render() {
     let TotalConfirmed, TotalDeaths, TotalRecovered;
-    if (this.state.CountryInfo.length > 225) {
-      let arr1 = [].concat(this.state.CountryInfo);
+    if (this.state.rapidInfo.length > 250) {
+      let arr1 = [].concat(this.state.rapidInfo);
       TotalConfirmed = arr1.sort(function (a, b) {
-        return b.TotalConfirmed - a.TotalConfirmed;
+        return b.confirmed - a.confirmed;
       });
 
-      let arr2 = [].concat(this.state.CountryInfo);
+      let arr2 = [].concat(this.state.rapidInfo);
       TotalDeaths = arr2.sort(function (a, b) {
-        return b.TotalDeaths - a.TotalDeaths;
+        return b.deaths - a.deaths;
       });
 
-      let arr3 = [].concat(this.state.CountryInfo);
+      let arr3 = [].concat(this.state.rapidInfo);
       TotalRecovered = arr3.sort(function (a, b) {
-        return b.TotalRecovered - a.TotalRecovered;
+        return b.recovered - a.recovered;
       });
     }
+    // console.log(TotalConfirmed, TotalDeaths, TotalRecovered);
 
     // var centerLat = (data.minLat + data.maxLat) / 2;
     // var distanceLat = data.maxLat - data.minLat;
@@ -137,16 +236,15 @@ class App extends Component {
     // var centerLong = (data.minLong + data.maxLong) / 2;
     // var distanceLong = data.maxLong - data.minLong;
     // var bufferLong = distanceLong * 0.05;
-    return this.state.TotalInfo.length > 560 ? (
+    return this.state.rapidInfo.length > 250 ? (
       <section class='dashboard'>
         <div class='left-pannel'>
           <div class='panel-box total-confirmed'>
             <span>Total Confirmed</span>
             <div class='total-numbers'>
-              {this.state.Global.TotalConfirmed.toString().replace(
-                /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                ','
-              )}
+              {this.state.Global.confirmed
+                .toString()
+                .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')}
             </div>
           </div>
           <div class='panel-box'>
@@ -161,12 +259,11 @@ class App extends Component {
                     <li>
                       <a href='#'>
                         <span>
-                          {result.TotalConfirmed.toString().replace(
-                            /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                            ','
-                          )}
+                          {result.confirmed
+                            .toString()
+                            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')}
                         </span>{' '}
-                        {result.Country}
+                        {result.country}
                       </a>
                     </li>
                   );
@@ -203,7 +300,7 @@ class App extends Component {
               // url='https://maps.omniscale.net/v2/{id}/style.grayscale/{z}/{x}/{y}.png'
             />
 
-            {this.state.TotalInfo.map((result, k) => {
+            {this.state.features.map((result, k) => {
               return (
                 <CircleMarker
                   id='circle'
@@ -220,18 +317,20 @@ class App extends Component {
                       fillOpacity: 0.1,
                     })
                   }
-                  center={[result.Lat, result.Lon]}
-                  color={this.getColor(result.Confirmed)}
+                  center={[result.lat, result.long]}
+                  color={this.getColor(result.cases.total)}
                   radius={
-                    result.Deaths < 10
+                    result.deaths.total < 10
                       ? 8
-                      : result.Deaths >= 10 && result.Deaths < 100
+                      : result.deaths.total >= 10 && result.deaths.total < 100
                       ? 15
-                      : result.Deaths >= 500 && result.Deaths < 1000
+                      : result.deaths.total >= 500 && result.deaths.total < 1000
                       ? 20
-                      : result.Deaths >= 1000 && result.Deaths < 5000
+                      : result.deaths.total >= 1000 &&
+                        result.deaths.total < 5000
                       ? 25
-                      : result.Deaths >= 5000 && result.Deaths < 10000
+                      : result.deaths.total >= 5000 &&
+                        result.deaths.total < 10000
                       ? 30
                       : 35
                   }
@@ -243,21 +342,21 @@ class App extends Component {
                     direction='top'
                     offset={[-8, -2]}
                     opacity={1}>
-                    <div className={this.getClassName(result.Confirmed)}>
+                    <div className={this.getClassName(result.cases.total)}>
                       <div>
-                        <h2>{result.Country}</h2>
+                        <h2>{result.country}</h2>
                       </div>
                       <p>
-                        Deaths: <span>{result.Deaths}</span>{' '}
+                        Deaths: <span>{result.deaths.total}</span>{' '}
                       </p>
                       <p>
-                        Active: <span>{result.Active}</span>
+                        Active: <span>{result.cases.active}</span>
                       </p>
                       <p>
-                        Recovered: <span>{result.Recovered}</span>
+                        Recovered: <span>{result.cases.recovered}</span>
                       </p>
                       <p>
-                        Confirmed: <span>{result.Confirmed}</span>
+                        Confirmed: <span>{result.cases.total}</span>
                       </p>
                     </div>
                   </Tooltip>
@@ -274,10 +373,9 @@ class App extends Component {
                 <div class='pannel-header'>
                   <span>Total Deaths</span>
                   <div class='total-numbers'>
-                    {this.state.Global.TotalDeaths.toString().replace(
-                      /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                      ','
-                    )}
+                    {this.state.Global.deaths
+                      .toString()
+                      .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')}
                   </div>
                 </div>
 
@@ -288,12 +386,14 @@ class App extends Component {
                         <li>
                           <p>
                             <span>
-                              {result.TotalDeaths.toString().replace(
-                                /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                                ','
-                              )}
+                              {result.deaths
+                                .toString()
+                                .replace(
+                                  /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
+                                  ','
+                                )}
                             </span>{' '}
-                            {result.Country}
+                            {result.country}
                           </p>
                           {/* <p>
                             <strong>{result.Country}</strong>
@@ -319,10 +419,9 @@ class App extends Component {
                 <div class='pannel-header'>
                   <span>Total Recovered</span>
                   <div class='total-numbers'>
-                    {this.state.Global.TotalRecovered.toString().replace(
-                      /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                      ','
-                    )}
+                    {this.state.Global.recovered
+                      .toString()
+                      .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')}
                   </div>
                 </div>
 
@@ -332,12 +431,11 @@ class App extends Component {
                       <li>
                         <p>
                           <span>
-                            {result.TotalRecovered.toString().replace(
-                              /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                              ','
-                            )}
+                            {result.recovered
+                              .toString()
+                              .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')}
                           </span>{' '}
-                          {result.Country}
+                          {result.country}
                         </p>
                         {/* <p>
                           <strong>{result.Country}</strong>
